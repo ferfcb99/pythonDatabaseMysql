@@ -56,10 +56,12 @@ def getDataById(tableName, id):
             datoDePerro = []
 
             for fila in filas:
-                diccionario = { 'id' : fila[0],
+                diccionario = { 
+                                'id' : fila[0],
                                 'nombre' : fila[1],
                                 'raza' : fila[2],
-                                'edad' : fila[3] }
+                                'edad' : fila[3] 
+                            }
                 '''
                 datoDePerro.append(fila[0])
                 datoDePerro.append(fila[1])
@@ -74,9 +76,37 @@ def getDataById(tableName, id):
 
 
 
-datosDiccionario = getDataById('perro', 2)
+def deleteById(id):
+    try:
+        conexion = generateConexion('localhost', 'root', '12345', 'animales')
+        
+        with conexion.cursor() as cursor:
+            query = f'delete from perro p where p.id = %s';
+           
+            # seteamos el id como string 
+            cursor.execute(query, (id));
 
-jsonData = json.dumps(datosDiccionario, indent=5)
+        conexion.commit()
+        return True
+    finally:
+        conexion.close()
+        return False
 
-print(jsonData)
 
+def actualiza(nombre, raza, id):
+    try:
+        conexion = generateConexion('localhost', 'root', '12345', 'animales')
+        
+        with conexion.cursor() as cursor:
+            query = f'update perro set nombre = %s, raza = %s where id = %s';
+            
+            actualizados = cursor.execute(query, (nombre, raza, id));
+            print(actualizados)
+
+        conexion.commit()
+        return True;
+    finally:
+        conexion.close()
+        return False;
+
+print(actualiza('Milo', 'Cruza', 6))
